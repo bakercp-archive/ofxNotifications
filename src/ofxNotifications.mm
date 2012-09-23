@@ -36,24 +36,25 @@ void ofxNotification(const string& title,
                      const string& description,
                      bool playSound) {
 
+
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8)
     NSUserNotification *notification = [[NSUserNotification alloc] init];
-    
     
     if(!title.empty()) {
         [notification setTitle:[NSString stringWithCString:title.c_str()
                                                   encoding:[NSString defaultCStringEncoding]]];
     }
-
+    
     if(!subtitle.empty()) {
         [notification setSubtitle:[NSString stringWithCString:subtitle.c_str()
                                                      encoding:[NSString defaultCStringEncoding]]];
     }
-
+    
     if(!description.empty()) {
         [notification setInformativeText:[NSString stringWithCString:description.c_str()
                                                             encoding:[NSString defaultCStringEncoding]]];
     }
-
+    
     [notification setSoundName:playSound?(NSUserNotificationDefaultSoundName):nil];
     
     [notification setDeliveryDate:[NSDate date]]; // now
@@ -62,6 +63,15 @@ void ofxNotification(const string& title,
     NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
     
     [center scheduleNotification:notification];
-
+    
     [notification release];
+
+#else
+    
+    ofLogWarning("ofxNotification") << "This is only compatible with OS X 10.8 or newer.";
+    
+#endif
+
+    
+    
 };
