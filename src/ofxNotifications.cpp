@@ -22,19 +22,44 @@
  
  ==============================================================================*/
 
-#pragma once
+#include "ofxNotifications.h"
 
-#include "ofMain.h"
-#include "ofIcon.h"
+#ifdef TARGET_LINUX
 
 void ofxNotification(const string& title,
-                     const string& description = "");
+                     const string& description) {
+
+    ofxNotification(title,"",description,true);
+}
 
 void ofxNotification(const string& title,
                      const string& description,
-                     bool playSound);
+                     bool playSound) {
+
+    ofxNotification(title,"",description,playSound);
+}
 
 void ofxNotification(const string& title,
                      const string& subtitle,
                      const string& description,
-                     bool playSound = true);
+                     bool playSound) {
+
+    const string& iconName = "icon.png";
+    const string& shNotify = "notify-send -i " + ofToDataPath(iconName, true) + " \"" + title + "\""
+                             + " \"" + (subtitle != ""? subtitle + "\n" : "") + description + "\"";
+
+    if (!ofFile(iconName).exists())
+    {
+        ofPixels iconPixels;
+
+        iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+        GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+
+        ofSaveImage(iconPixels, iconName);
+    }
+
+    ofSystem(shNotify);
+}
+
+#endif // TARGET_LINUX
+

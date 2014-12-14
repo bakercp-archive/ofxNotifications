@@ -25,6 +25,12 @@
 #include "ofxNotifications.h"
 
 void ofxNotification(const string& title,
+                     const string& description) {
+
+    ofxNotification(title,"",description,true);
+}
+
+void ofxNotification(const string& title,
                      const string& description,
                      bool playSound) {
 
