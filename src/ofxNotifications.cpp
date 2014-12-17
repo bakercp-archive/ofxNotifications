@@ -23,11 +23,14 @@
 // =============================================================================
 
 
+
 #include "ofxNotifications.h"
 
 
+#ifdef TARGET_LINUX
 void ofxNotification(const std::string& title, const std::string& description)
 {
+
     ofxNotification(title, "", description, true);
 }
 
@@ -45,39 +48,23 @@ void ofxNotification(const std::string& title,
                      const std::string& description,
                      bool playSound)
 {
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8)
-    NSUserNotification *notification = [[NSUserNotification alloc] init];
-    
-    if(!title.empty())
-    {
-        [notification setTitle:[NSString stringWithCString:title.c_str()
-                                                  encoding:[NSString defaultCStringEncoding]]];
-    }
-    
-    if(!subtitle.empty())
-    {
-        [notification setSubtitle:[NSString stringWithCString:subtitle.c_str()
-                                                     encoding:[NSString defaultCStringEncoding]]];
-    }
-    
-    if(!description.empty())
-    {
-        [notification setInformativeText:[NSString stringWithCString:description.c_str()
-                                                            encoding:[NSString defaultCStringEncoding]]];
-    }
-    
-    [notification setSoundName:playSound?(NSUserNotificationDefaultSoundName):nil];
-    
-    [notification setDeliveryDate:[NSDate date]]; // now
-    
-    
-    NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
-    
-    [center scheduleNotification:notification];
-    
-    [notification release];
 
-#else
-    ofLogWarning("ofxNotification") << "This is only compatible with OS X 10.8 or newer.";
-#endif
-};
+    const std::string& iconName = "icon.png";
+    const std::string& shNotify = "notify-send -i " + ofToDataPath(iconName, true) + " \"" + title + "\""
+                             + " \"" + (subtitle != "" ? subtitle + "\n" : "") + description + "\"";
+
+    if (!ofFile(iconName).exists())
+    {
+        ofPixels iconPixels;
+
+        iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+        GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+
+        ofSaveImage(iconPixels, iconName);
+    }
+
+    ofSystem(shNotify);
+}
+
+#endif // TARGET_LINUX
+
