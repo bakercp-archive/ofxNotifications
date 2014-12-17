@@ -27,17 +27,13 @@
 
 
 #include "ofMain.h"
-#include "ofIcon.h"
+#include "ofxNotifications.h"
 
 
-void ofxNotification(const std::string& title,
-                     const std::string& description = "");
-
-void ofxNotification(const std::string& title,
-                     const std::string& description,
-                     bool playSound);
-
-void ofxNotification(const std::string& title,
-                     const std::string& subtitle,
-                     const std::string& description,
-                     bool playSound = true);
+class ofApp: public ofBaseApp
+{
+public:
+    void draw();
+    void keyPressed(int key);
+    
+};

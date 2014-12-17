@@ -23,21 +23,20 @@
 // =============================================================================
 
 
-#pragma once
+#include "ofApp.h"
 
 
-#include "ofMain.h"
-#include "ofIcon.h"
+void ofApp::draw()
+{
+    ofBackground(0);
+    ofSetColor(255);
+    ofDrawBitmapString("Press a key to send a message.", 10, 15);
+}
 
 
-void ofxNotification(const std::string& title,
-                     const std::string& description = "");
-
-void ofxNotification(const std::string& title,
-                     const std::string& description,
-                     bool playSound);
-
-void ofxNotification(const std::string& title,
-                     const std::string& subtitle,
-                     const std::string& description,
-                     bool playSound = true);
+void ofApp::keyPressed(int key)
+{
+    ofxNotification("A Key Pressed",
+                    "A special key.",
+                    "In particular, the " + ofToString(key) + " was pressed.");
+}
